@@ -1,4 +1,4 @@
-from integrate import init, translate, isValidInput
+from integrate import init, translate, is_valid_input
 from flask import Flask, jsonify, request, abort, Response
 from werkzeug.exceptions import BadRequest
 
