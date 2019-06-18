@@ -57,6 +57,7 @@ This is the translation function. There is a parameter `input` which is the text
     "translation": string/None,
     "original": string/None,
     "error": string/None,
+    "timeTaken": int/None,
     "model": string
 }
 ```
@@ -68,6 +69,7 @@ e.g.
     "translation": "translated text here",
     "original": "original text here",
     "error": None,
+    "timeTaken": int/None,
     "model": "0.1"
 }
 ```
