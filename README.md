@@ -134,7 +134,33 @@ curl localhost:4000 -v
 curl -X POST -d '{"q":"hello world"}' -H "Content-Type: application/json" -v localhost:4000/translation
 ```
 
-# TODO:
+#### Tag Format
 
-- Add info on how to tag docker images
-- Add info on how to push image to a docker repository
+Tags should be in the format:
+`newslabsgourmet/translation-language1-language2:version`
+
+Where:
+`language1`: is the 2-character (ISO 639-1 alpha-2 code) language code representing the source language
+
+`language2`: is the 2-character (ISO 639-1 alpha-2 code) language code representing the target language
+
+`version`: is a version identifier in [Semver](https://semver.org/) format.
+
+An image can either be tagged with a specific version number or with `latest` where "latest" represents a special tag reserved for the most recent published version of a Docker images for a particular language pair. Either a version or the "latest" label shall be present, not both.
+
+Example
+
+For the latest version of a translation module for Arabic to English: `translation-ar-en:latest`
+
+After a new version of this module is published, the current `latest` will become a Semver version, and the updated module will be tagged with `latest`. An example below shows the registry tags for the `translation-ar-en` module after two versions have been published.
+
+```
+translation-ar-en:latest
+translation-ar-en:0.0.1
+```
+
+### Push to the Docker Repository
+
+Before doing this you need to be in the `newslabsgourmet` organisation and request a new repository be created.
+
+`docker push newslabsgourmet/translation-language1-language2:version`
