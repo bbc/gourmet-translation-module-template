@@ -28,32 +28,23 @@ POST endpoint. Translates from the source language to the target language. Expec
 
 ```
 {
-    "translation": string/None,
-    "original": string/None,
+    "result": string/None,
+    "time_taken: int/None,
     "error": string/None,
-    "timeTaken: int/None,
-    "model": string
 }
 ```
 
-Where timeTaken is in milliseconds.
-
-For example: `curl -X POST -d '{"q":"hello world"}' -H "Content-Type: application/json" localhost:4000/translation`
-
-### `/checkInput`
-
-POST endpoint. Checks that a string contains only valid characters. Returns true if it does and false otherwise. Expects JSON data of the form `{"q"=string}` e.g. `{"q"="hello world"}`. Returns:
+Where time_taken is in milliseconds and error is of the form:
 
 ```
 {
-    "isValidInput": boolean,
-    "original": string/None,
-    "error": string/None,
-    "model": string
+    "reason" : string
+    "timestamp" : int,
+    "model_version" : string
 }
 ```
 
-For example: `curl -X POST -d '{"q":"hello world"}' -H "Content-Type: application/json" localhost:4000/checkInput`
+For example: `curl -X POST -d '{"q":"hello world"}' -H "Content-Type: application/json" localhost:4000/translation`
 
 ## What you need to do
 
@@ -63,7 +54,7 @@ You will need [Docker](https://www.docker.com/) installed on your machine. Insta
 
 ### Implement some functions:
 
-Implement three functions in the `integrate.py` file. There is placeholder code in the functions which can be deleted. You can add additional functions and variables to the file but the `init`, `translate` and `is_valid_input` functions should not be deleted and the function signatures should not be changed. You can add additional directories and files but the `app.py`, `Dockerfile`, and `requirements.txt` need to remain in the root directory and remain as they are. The `integrate.py` file also needs to remain in the root directory.
+Implement two functions in the `integrate.py` file. There is placeholder code in the functions which can be deleted. You can add additional functions and variables to the file but the `init` and `translate` functions should not be deleted and the function signatures should not be changed. You can add additional directories and files but the `app.py`, `Dockerfile`, and `requirements.txt` need to remain in the root directory. The `integrate.py` file also needs to remain in the root directory.
 
 #### `init(logger)`
 
@@ -75,11 +66,9 @@ This is the translation function. There is a parameter `input` which is the text
 
 ```
 {
-    "translation": string/None,
-    "original": string/None,
+    "result": string/None,
+    "time_taken: int/None,
     "error": string/None,
-    "timeTaken": int/None,
-    "model": string
 }
 ```
 
@@ -87,47 +76,19 @@ e.g.
 
 ```
 {
-    "translation": "translated text here",
-    "original": "original text here",
+    "result": "translated text here",
+    "time_taken": 100,
     "error": None,
-    "timeTaken": 100,
-    "model": "0.1"
 }
 ```
 
 Time taken must be in milliseconds. The [Handle Errors](#handle-errors) section of the README outlines how to handle errors and the shape of the 'error' object.
 
-#### `is_valid_input(input, logger)`
-
-This function checks that the `input` parameter, which will be a string, is a valid input for the translation model. An input should not be considered valid if it contains special characters or formatting which cannot be guaranteed to be preserved or handled correctly in the translation process. The function also take the parameter `logger`. This is a logger object that is either the [python default logger](https://docs.python.org/3/library/logging.html) or an instance of a class that matches the default python logging interface. The function must return a [python dictionary](https://docs.python.org/3.7/tutorial/datastructures.html#dictionaries) of the following shape:
-
-```
-{
-    "isValidInput": boolean,
-    "original": string/None,
-    "error": object/None,
-    "model": string
-}
-```
-
-e.g.
-
-```
-{
-    "isValidInput": True,
-    "original": "original text here",
-    "error": None,
-    "model": "0.1"
-}
-```
-
-The [Handle Errors](#handle-errors) section of the README outlines how to handle errors and the shape of the 'error' object.
-
 ### Handle Errors
 
-Errors should be handled by either raising an exception or logging to the logger passed into each of the 3 functions. Errors should be surfaced by either raising an exception or manually adding a log to the logger provided and error messages should contain as much information as possible. As a minimum and error message shall report the reason for failure. The python documentation on [logging](https://docs.python.org/3/howto/logging.html#logging-basic-tutorial) should be used to determine the appropriate logging level for a given incident.
+Errors should be handled by either raising an exception or logging to the logger passed into each of the functions. Errors should be surfaced by either raising an exception or manually adding a log to the logger provided and error messages should contain as much information as possible. As a minimum and error message shall report the reason for failure. The python documentation on [logging](https://docs.python.org/3/howto/logging.html#logging-basic-tutorial) should be used to determine the appropriate logging level for a given incident.
 
-In addition the `translate` and `is_valid_input` should also return an error object as part of larger object returned by both of these functions. The structure of the error object shall be as follows:
+In addition the `translate` function should also return an error object as part of larger object returned by both of these functions. The structure of the error object shall be as follows:
 
 ```
 {
@@ -146,6 +107,10 @@ e.g
     "model_version": "0.1"
 }
 ```
+
+### Change the Dockerfile if you need to
+
+No commands should be removed from the Dockerfile template provided but additional commands can be added. The `CMD ["python", "app.py"]` must be the final step in the Dockerfile. The base image can be changed to be something other than `python:3}` providing the new base image also includes Python 3.
 
 ### Build Docker Image
 
@@ -167,8 +132,6 @@ The endpoints can be checked using cURL
 curl localhost:4000 -v
 
 curl -X POST -d '{"q":"hello world"}' -H "Content-Type: application/json" -v localhost:4000/translation
-
-curl -X POST -d '{"q":"hello world"}' -H "Content-Type: application/json" -v localhost:4000/checkInput
 ```
 
 # TODO:
