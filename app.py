@@ -41,5 +41,5 @@ def handle_POST(func):
 
 
 if __name__ == "__main__":
-    model = init(logging)
+    model = init()
     app.run(host='0.0.0.0', port=4000)

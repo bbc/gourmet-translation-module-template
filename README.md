@@ -10,12 +10,11 @@ To provide a consistent interface for all translation models delivered over the 
 
 This a basic API build using [python](https://www.python.org/) and [flask](http://flask.pocoo.org/).
 
-There are 3 endpoints:
+There are 2 endpoints:
 
 ```
 GET /
 POST /translate
-POST /checkInput
 ```
 
 ### `/`
@@ -56,13 +55,19 @@ You will need [Docker](https://www.docker.com/) installed on your machine. Insta
 
 Implement two functions in the `integrate.py` file. There is placeholder code in the functions which can be deleted. You can add additional functions and variables to the file but the `init` and `translate` functions should not be deleted and the function signatures should not be changed. You can add additional directories and files but the `app.py`, `Dockerfile`, and `requirements.txt` need to remain in the root directory. The `integrate.py` file also needs to remain in the root directory.
 
-#### `init(logger)`
+#### `init()`
 
-This function is run once when the application starts. This is where all set up required by you should be done. The function has one parameter,`logger`, which is a logger object that is either the [python default logger](https://docs.python.org/3/library/logging.html) or an instance of a class that matches the default python logging interface.
+This function is run once when the application starts. This is where all set up required by you should be done. `init` should return a translationModel. This model will be passed into the translate function whenever it is called.
 
-#### `translate(input, logger)`
+#### `translate(initialisedModel, textToTranslate, logger)`
 
-This is the translation function. There is a parameter `input` which is the text that needs to be translated and a parameter `logger` which is a logger object that is either the [python default logger](https://docs.python.org/3/library/logging.html) or an instance of a class that matches the default python logging interface. The function must return a [python dictionary](https://docs.python.org/3.7/tutorial/datastructures.html#dictionaries) of the following shape:
+This is the translation function. There are three parameters:
+
+- `initialisedModel` which is the model created by the `init` function
+- `textToTranslate` which is the text that needs to be translated
+- `logger` which is a logger object that is either the [python default logger](https://docs.python.org/3/library/logging.html) or an instance of a class that matches the default python logging interface.
+
+The function must return a [python dictionary](https://docs.python.org/3.7/tutorial/datastructures.html#dictionaries) of the following shape:
 
 ```
 {
@@ -110,7 +115,14 @@ e.g
 
 ### Change the Dockerfile if you need to
 
-No commands should be removed from the Dockerfile template provided but additional commands can be added. The `CMD ["python", "app.py"]` must be the final step in the Dockerfile. The base image can be changed to be something other than `python:3}` providing the new base image also includes Python 3.
+No commands should be removed from the Dockerfile template provided but additional commands can be added. The `CMD ["python", "app.py"]` must be the final step in the Dockerfile. The base image can be changed to be something other than `python:3}` providing the new base image also includes [Python 3](https://www.python.org/) and [pip](https://pypi.org/project/pip) or they are added via the Dockerfile.
+
+For example you could use [apt](https://wiki.debian.org/Apt) in the Dockerfile if your base image was not `python:3`:
+
+```
+RUN apt-get update
+RUN apt-get install -y python3 python3-pip
+```
 
 ### Build Docker Image
 
@@ -133,34 +145,3 @@ curl localhost:4000 -v
 
 curl -X POST -d '{"q":"hello world"}' -H "Content-Type: application/json" -v localhost:4000/translation
 ```
-
-#### Tag Format
-
-Tags should be in the format:
-`newslabsgourmet/translation-language1-language2:version`
-
-Where:
-`language1`: is the 2-character (ISO 639-1 alpha-2 code) language code representing the source language
-
-`language2`: is the 2-character (ISO 639-1 alpha-2 code) language code representing the target language
-
-`version`: is a version identifier in [Semver](https://semver.org/) format.
-
-An image can either be tagged with a specific version number or with `latest` where "latest" represents a special tag reserved for the most recent published version of a Docker images for a particular language pair. Either a version or the "latest" label shall be present, not both.
-
-Example
-
-For the latest version of a translation module for Arabic to English: `translation-ar-en:latest`
-
-After a new version of this module is published, the current `latest` will become a Semver version, and the updated module will be tagged with `latest`. An example below shows the registry tags for the `translation-ar-en` module after two versions have been published.
-
-```
-translation-ar-en:latest
-translation-ar-en:0.0.1
-```
-
-### Push to the Docker Repository
-
-Before doing this you need to be in the `newslabsgourmet` organisation and request a new repository be created.
-
-`docker push newslabsgourmet/translation-language1-language2:version`

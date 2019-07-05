@@ -1,4 +1,4 @@
-def init(logger):
+def init():
     # The following line and this comment can be deleted
     print("Set up complete")
     return "model"
