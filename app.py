@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 @app.route("/", methods=['GET'])
 def root():
-    return "This is a translation module. Use the /translation endpoint for translating text and the /checkInput endpoint to check that the input is valid."
+    return "This is a translation module. Use the /translation endpoint for translating text."
 
 
 @app.route("/translation", methods=['POST'])
