@@ -29,7 +29,7 @@ POST endpoint. Translates from the source language to the target language. Expec
 {
     "result": string/None,
     "time_taken: int/None,
-    "error": string/None,
+    "error": Object/None,
 }
 ```
 
