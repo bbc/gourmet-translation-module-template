@@ -145,3 +145,26 @@ curl localhost:4000 -v
 
 curl -X POST -d '{"q":"hello world"}' -H "Content-Type: application/json" -v localhost:4000/translation
 ```
+
+### Export Image
+
+Export and compress an image using:
+
+```
+docker save <image name> | gzip > filename.tar.gz
+```
+
+## General useful Docker commands
+
+- List all images: `docker images`
+- List all running containers: `docker ps`
+- List all containers: `docker container ls --all`
+
+- Stop a container: `docker container stop <container id>`
+- Stop all containers: `docker stop $(docker ps -q)`
+
+- Remove an image: `docker rmi <image id>`
+- Remove a container: `docker rm <container id>`
+
+- See the logs for a container: `docker logs <container id>`
+- See events from docker: `docker events`
