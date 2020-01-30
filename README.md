@@ -146,6 +146,14 @@ curl localhost:4000 -v
 curl -X POST -d '{"q":"hello world"}' -H "Content-Type: application/json" -v localhost:4000/translation
 ```
 
+or curled with the data in a json file
+
+```
+curl -X POST -d '@data.json' -H "Content-Type: application/json" -v localhost:4000/translation
+```
+
+Where `data.json` is a file in the directory the curl command is run from and contains the data for the curl command e.g. `{"q":"hello world"}`
+
 ### Export Image
 
 Export and compress an image using:
